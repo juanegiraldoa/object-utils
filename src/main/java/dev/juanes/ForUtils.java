@@ -6,20 +6,29 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class ForUtils {
-    public static Iterable<Integer> range(int start, int end) {
+    public static Iterable<Integer> range(int start, int end, int step) {
+        if (step == 0) throw new IllegalArgumentException("Step cannot be zero");
         return () -> new Iterator<>() {
             private int current = start;
 
             @Override
             public boolean hasNext() {
-                return current <= end;
+                if (step > 0) return current <= end;
+                else return current >= end;
             }
 
             @Override
             public Integer next() {
-                return current++;
+                if (!hasNext()) throw new NoSuchElementException();
+                int result = current;
+                current += step;
+                return result;
             }
         };
+    }
+
+    public static Iterable<Integer> range(int start, int end) {
+        return range(start, end, 1);
     }
 
     public static Iterable<LocalDate> range(LocalDate start, LocalDate end, Integer amount, ChronoUnit unit) {
@@ -28,7 +37,7 @@ public class ForUtils {
 
             @Override
             public boolean hasNext() {
-                return current.isBefore(end.plus(amount, unit));
+                return !current.isAfter(end);
             }
 
             @Override
@@ -36,7 +45,7 @@ public class ForUtils {
                 if (!hasNext())
                     throw new NoSuchElementException();
                 LocalDate result = current;
-                current = current.plus(1, unit);
+                current = current.plus(amount, unit);
                 return result;
             }
         };
