@@ -4,7 +4,6 @@ plugins {
 }
 
 group = "com.github.juanegiraldoa"
-version = "20250912"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
